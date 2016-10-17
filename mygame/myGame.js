@@ -12,6 +12,7 @@ function preload() {
     
     game.load.image('sky', 'assets/sky.png');
     game.load.image('ground', 'assets/platform.png');
+    // game.load.image('star', 'assets/oldstar.png');
     game.load.spritesheet('star', 'assets/dude.png', 40, 40);
     game.load.spritesheet('dude', 'assets/olddude.png', 32, 48);
     
@@ -19,20 +20,51 @@ function preload() {
 
 function create() {
     game.add.sprite(0,0,'sky');
-    // game.add.sprite(500,250,'star');
+    // game.add.sprite(50,50,'star');
     platforms = game.add.group();
     platforms.enableBody = true;
     var ground = platforms.create(0, game.world.height - 64, 'ground');
     ground.scale.setTo(4,2);
     ground.body.immovable = true;
+    
     var ledge = platforms.create(10, 600, 'ground');
     ledge.body.immovable = true;
     ledge.scale.setTo(0.1,0.1);
+    
+    ledge = platforms.create(150, 500, 'ground');
+    ledge.body.immovable = false;
+    ledge.scale.setTo(0.1,0.1);
+    
+    ledge = platforms.create(300, 400, 'ground');
+    ledge.body.immovable = false;
+    ledge.scale.setTo(0.1,0.1);
+    
+    ledge = platforms.create(450, 300, 'ground');
+    ledge.body.immovable = false;
+    ledge.scale.setTo(0.1,0.1);
+    
+    ledge = platforms.create(600, 200, 'ground');
+    ledge.body.immovable = false;
+    ledge.scale.setTo(0.1,0.1);
+    
+    ledge = platforms.create(750, 100, 'ground');
+    ledge.body.immovable = false;
+    ledge.scale.setTo(0.1,0.1);
+    
+    ledge = platforms.create(750, 100, 'ground');
+    ledge.body.immovable = true;
+    ledge.scale.setTo(40,0.1);
+    
     ledge = platforms.create(1000, 600, 'ground');
     ledge.body.immovable = false;
     ledge.scale.setTo(0.1,0.1);
+    
+    ledge = platforms.create(1300, 100, 'ground');
+    ledge.body.immovable = true;
+    ledge.scale.setTo(21,21);
+    
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    player = game.add.sprite(400, game.world.height - 1520, 'dude');
+    player = game.add.sprite(0, game.world.height - 1520, 'dude');
     game.physics.arcade.enable(player);
     player.body.bounce.y = 0.23;
     player.body.gravity.y = 900;
@@ -41,14 +73,24 @@ function create() {
     player.animations.add('right', [5, 6, 7, 8], 10, true);
     cursors = game.input.keyboard.createCursorKeys();
     stars = game.add.group();
-    stars.animations.add('shine', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], true);
     stars.enableBody = true;
-    for (var i=0; i < 12; i++){
-        var star = stars.create(i * 100,0,'star');
-        star.body.gravity.y = 900;
-        star.body.bounce.y = 0.2 + Math.random() * 0.2;
+    stars.callAll('animations.add', 'animations', 'shine', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
+    // stars.callAll('animations.play', 'animations', 'shine');
+    // stars.animations.add('shine', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
+    // for (var i=0; i < 12; i++){
+    //     var star = stars.create(i * 100,0,'star');
+    //     star.body.gravity.y = 900;
+    //     star.body.bounce.y = 0.2 + Math.random() * 0.2;
+    // }
+    for (var i=0; i<1; i++){
+        var star = stars.create(1300,0, 'star');
+        star.body.gravity.y =900;
+        star.body.bounce.y = 0.2+ Math.random() * 0.2;
     }
-    scoreText = game.add.text(16, 16, 'score: 0', {fontSize: '32px', fill: '#000'});
+    //You're welcome
+    stars.callAll('animations.add', 'animations', 'shine', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
+    stars.callAll('animations.play', 'animations', 'shine');
+    scoreText = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#000'});
 }
 
 function update() {
@@ -65,7 +107,7 @@ function update() {
 
     else if (cursors.right.isDown)
     {
-        player.body.velocity.x = 60;
+        player.body.velocity.x = 150;
         
         player.animations.play('right');
     }
@@ -85,7 +127,8 @@ function update() {
     
     game.physics.arcade.overlap(player, stars, collectStar, null, this);
     scoreText.text = "Score:" + score;
-    stars.animations.play('shine');
+    // stars.animations.play('shine');
+    stars.callAll('animations.play', 'animations', 'shine');
 }
 function collectStar (player, star) {
     
